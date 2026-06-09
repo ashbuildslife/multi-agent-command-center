@@ -1,12 +1,12 @@
 # Multi-Agent AI Command Center
 
-A real-time operations dashboard for teams running multiple AI agents simultaneously. Track what every agent is doing. Catch drift before outputs diverge. Detect cost loops and auto-halt runaway agents. Review agent outputs before they reach production — all from a single command center.
+A real-time operations dashboard for teams running multiple AI agents simultaneously. Track what every agent is doing. Catch drift before outputs diverge. Detect cost loops and auto-halt runaway agents. Review agent outputs before they reach production. All from a single command center.
 
 This project is a portfolio demonstration of agent infrastructure patterns: observability, drift detection, cost tracking, trust-tiered permissions, loop detection with auto-halt, and human-in-the-loop artifact review.
 
 ## Who this is for
 
-**Operations teams running multiple AI agents.** If you have 5, 10, or 50 agents working in parallel across different projects, this shows what observability looks like — not a firehose of traces, but a dashboard that surfaces what needs attention.
+**Operations teams running multiple AI agents.** If you have 5, 10, or 50 agents working in parallel across different projects, this shows what observability looks like. Not a firehose of traces, but a dashboard that surfaces what needs attention.
 
 **Engineering leaders evaluating agent platform capabilities.** It proves you've thought through the hard problems: cost predictability, agent reliability, permission boundaries between agents, and human oversight that doesn't require watching every agent action.
 
@@ -18,17 +18,17 @@ The agent industry has a fracture that isn't discussed enough: the more agents y
 
 This project addresses that fracture directly. Instead of raw agent traces, it surfaces:
 
-- **Which agents are running, idle, stuck, or failed** — with a state trail showing how they got there
-- **Where agents disagree** — drift detection that compares assumptions across agents before outputs cascade
-- **What it costs** — per-agent and per-project cost tracking with budget thresholds, because multi-agent costs grow non-linearly
-- **When an agent is looping** — automatic detection when an agent revisits the same state 3+ times, with auto-halt
-- **What needs human judgment** — a review queue organized by trust tier, not all-or-nothing permission flags
+- **Which agents are running, idle, stuck, or failed**: with a state trail showing how they got there
+- **Where agents disagree**: drift detection that compares assumptions across agents before outputs cascade
+- **What it costs**: per-agent and per-project cost tracking with budget thresholds, because multi-agent costs grow non-linearly
+- **When an agent is looping**: automatic detection when an agent revisits the same state 3+ times, with auto-halt
+- **What needs human judgment**: a review queue organized by trust tier, not all-or-nothing permission flags
 
 The demo models a fintech compliance workspace with 10 agent workers across 4 projects: KYC document review, transaction fraud detection, regulatory report generation, and client onboarding.
 
-MEDIA:/home/hermes/workspace/upwork-demo-portfolio/multi-agent-command-center/docs/screenshots/01-dashboard-hero.png
+![](docs/screenshots/01-dashboard-hero.png)
 
-*Above: the command center dashboard showing active agent count, pending review queue, loop halts, and high-severity drift alerts — the four numbers every operator needs at a glance.*
+*Above: the command center dashboard showing active agent count, pending review queue, loop halts, and high-severity drift alerts. These are the four numbers every operator needs at a glance.*
 
 ## What you're looking at
 
@@ -44,14 +44,14 @@ MEDIA:/home/hermes/workspace/upwork-demo-portfolio/multi-agent-command-center/do
 
 ## Features
 
-- **Agent observability grid** — 10 worker cards showing status, current task, tokens used, estimated cost, trust level, and a state trail showing how each agent arrived at its current state
-- **Drift detection** — Two agents disagreeing on the same assumption (e.g., different risk threshold values) are flagged side-by-side with severity scoring
-- **Loop detection with auto-halt** — When an agent revisits the same state 3+ times, it is automatically halted. The dashboard shows a red alert and the state trail
-- **Three-tier trust model** — Per-agent configuration: auto-approve, review-required, or deny. No all-or-nothing permission fatigue
-- **Run artifact review** — Agent outputs requiring human approval are queued with accept/change/reject actions. Loop-tainted artifacts are flagged
-- **Cost tracking** — Per-agent and per-project cost breakdown with monthly budget gauge. Budget alert fires at 80%
-- **Audit log** — Every agent action recorded with cost, timestamp, and detail. Filterable by agent, project, or action type
-- **Workspace management** — Members, projects, and agent counts visible at a glance
+- **Agent observability grid**: 10 worker cards showing status, current task, tokens used, estimated cost, trust level, and a state trail showing how each agent arrived at its current state
+- **Drift detection**: Two agents disagreeing on the same assumption (e.g., different risk threshold values) are flagged side-by-side with severity scoring
+- **Loop detection with auto-halt**: When an agent revisits the same state 3+ times, it is automatically halted. The dashboard shows a red alert and the state trail
+- **Three-tier trust model**: Per-agent configuration: auto-approve, review-required, or deny. No all-or-nothing permission fatigue
+- **Run artifact review**: Agent outputs requiring human approval are queued with accept/change/reject actions. Loop-tainted artifacts are flagged
+- **Cost tracking**: Per-agent and per-project cost breakdown with monthly budget gauge. Budget alert fires at 80%
+- **Audit log**: Every agent action recorded with cost, timestamp, and detail. Filterable by agent, project, or action type
+- **Workspace management**: Members, projects, and agent counts visible at a glance
 
 ## Tech stack
 
@@ -60,9 +60,9 @@ MEDIA:/home/hermes/workspace/upwork-demo-portfolio/multi-agent-command-center/do
 | Framework | Next.js App Router |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
-| Testing | Vitest — 8 tests covering agent observability, drift detection, cost tracking, and artifact review |
+| Testing | Vitest: 8 tests covering agent observability, drift detection, cost tracking, and artifact review |
 | CI | GitHub Actions |
-| Data | TypeScript fixture data — no database required for demo |
+| Data | TypeScript fixture data, no database required for demo |
 
 ## Architecture
 
@@ -72,7 +72,7 @@ src/app/page.tsx              ← Dashboard: observability grid, drift panel, co
   → src/lib/types.ts          ← TypeScript interfaces for all domain objects
 ```
 
-The dashboard is a single async server component. All data is fixture-based — no database, no API keys, no network calls. This is intentional: the demo proves observability patterns without requiring infrastructure.
+The dashboard is a single async server component. All data is fixture-based. no database, no API keys, no network calls. This is intentional: the demo proves observability patterns without requiring infrastructure.
 
 See `docs/architecture.md` for the trust tier model, drift detection algorithm, and loop detection logic.
 
@@ -92,7 +92,7 @@ Open `http://localhost:3000`.
 ```bash
 npm run lint        # ESLint with zero warnings
 npm run typecheck   # TypeScript strict mode
-npm test            # Vitest — 8 tests, 1 suite
+npm test            # Vitest. 8 tests, 1 suite
 npm run build       # Production build
 ```
 
@@ -130,7 +130,7 @@ SCREENSHOT_URL=http://127.0.0.1:3108 node scripts/capture-screenshots.mjs
 
 - No real API keys, secrets, or credentials committed
 - All people, companies, and metrics are fictional
-- Mock providers are default — no network calls
+- Mock providers are default. no network calls
 - See `docs/public-safety.md` for the publication checklist
 
 ---
