@@ -1,6 +1,8 @@
 export type AgentStatus = "idle" | "running" | "review_needed" | "halted" | "completed" | "failed";
 export type TrustLevel = "auto_approve" | "review_required" | "deny";
 export type DriftSeverity = "none" | "low" | "medium" | "high";
+export type AuditCategory = "system" | "data_access" | "risk_decision" | "compliance_review";
+export type PermissionDecision = "allowed" | "review_required" | "blocked";
 
 export interface WorkspaceMember {
   id: string;
@@ -71,6 +73,9 @@ export interface AuditEntry {
   agentId: string;
   action: string;
   detail: string;
+  category: AuditCategory;
+  permissionDecision: PermissionDecision;
+  immutableHash: string;
   timestamp: string;
   cost: number;
 }

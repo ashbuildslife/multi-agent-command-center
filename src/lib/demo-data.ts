@@ -146,14 +146,14 @@ export const demoArtifacts: RunArtifact[] = [
 ];
 
 export const demoAuditLog: AuditEntry[] = [
-  { id: "aud_001", agentId: "ag_kyc_doc", action: "batch_processed", detail: "Batch #47: 50 passports processed, 48 valid, 2 flagged for manual review", timestamp: "2026-06-08T14:32:00Z", cost: 0.37 },
-  { id: "aud_002", agentId: "ag_kyc_risk", action: "risk_flag_raised", detail: "Entity GreenField Holdings flagged as high-risk (87% sanctions match confidence)", timestamp: "2026-06-08T14:28:00Z", cost: 0.27 },
-  { id: "aud_003", agentId: "ag_fraud_tx", action: "anomaly_detected", detail: "Transaction #TX-2847: $47,200 outbound to new beneficiary, 14x account average", timestamp: "2026-06-08T14:35:00Z", cost: 0.08 },
-  { id: "aud_004", agentId: "ag_fraud_explain", action: "loop_halted", detail: "Agent auto-halted after revisiting explain_attempt_3 state 3 times", timestamp: "2026-06-08T14:30:00Z", cost: 0.94 },
-  { id: "aud_005", agentId: "ag_reg_draft", action: "draft_completed", detail: "Q2 MIFID narrative draft ready for compliance review", timestamp: "2026-06-08T14:15:00Z", cost: 0.57 },
-  { id: "aud_006", agentId: "ag_onb_verify", action: "api_timeout", detail: "Registry API timeout after 3 retries (30s each). Affected: 12 entity verifications.", timestamp: "2026-06-08T14:10:00Z", cost: 0.19 },
-  { id: "aud_007", agentId: "ag_onb_collect", action: "docs_fetched", detail: "12 incorporation documents retrieved from ACRA", timestamp: "2026-06-08T14:33:00Z", cost: 0.83 },
-  { id: "aud_008", agentId: "ag_reg_format", action: "validation_passed", detail: "MIFID format validation: 0 errors, 3 warnings (non-blocking)", timestamp: "2026-06-08T14:18:00Z", cost: 0.10 }
+  { id: "aud_001", agentId: "ag_kyc_doc", action: "batch_processed", detail: "Batch #47: 50 passports processed, 48 valid, 2 flagged for manual review", category: "data_access", permissionDecision: "allowed", immutableHash: "sha256:9e1c2d0a-aud-001", timestamp: "2026-06-08T14:32:00Z", cost: 0.37 },
+  { id: "aud_002", agentId: "ag_kyc_risk", action: "risk_flag_raised", detail: "Entity GreenField Holdings flagged as high-risk (87% sanctions match confidence)", category: "risk_decision", permissionDecision: "review_required", immutableHash: "sha256:9e1c2d0a-aud-002", timestamp: "2026-06-08T14:28:00Z", cost: 0.27 },
+  { id: "aud_003", agentId: "ag_fraud_tx", action: "anomaly_detected", detail: "Transaction #TX-2847: $47,200 outbound to new beneficiary, 14x account average", category: "risk_decision", permissionDecision: "review_required", immutableHash: "sha256:9e1c2d0a-aud-003", timestamp: "2026-06-08T14:35:00Z", cost: 0.08 },
+  { id: "aud_004", agentId: "ag_fraud_explain", action: "loop_halted", detail: "Agent auto-halted after revisiting explain_attempt_3 state 3 times", category: "system", permissionDecision: "blocked", immutableHash: "sha256:9e1c2d0a-aud-004", timestamp: "2026-06-08T14:30:00Z", cost: 0.94 },
+  { id: "aud_005", agentId: "ag_reg_draft", action: "draft_completed", detail: "Q2 MIFID narrative draft ready for compliance review", category: "compliance_review", permissionDecision: "review_required", immutableHash: "sha256:9e1c2d0a-aud-005", timestamp: "2026-06-08T14:15:00Z", cost: 0.57 },
+  { id: "aud_006", agentId: "ag_onb_verify", action: "api_timeout", detail: "Registry API timeout after 3 retries (30s each). Affected: 12 entity verifications.", category: "system", permissionDecision: "blocked", immutableHash: "sha256:9e1c2d0a-aud-006", timestamp: "2026-06-08T14:10:00Z", cost: 0.19 },
+  { id: "aud_007", agentId: "ag_onb_collect", action: "docs_fetched", detail: "12 incorporation documents retrieved from ACRA", category: "data_access", permissionDecision: "allowed", immutableHash: "sha256:9e1c2d0a-aud-007", timestamp: "2026-06-08T14:33:00Z", cost: 0.83 },
+  { id: "aud_008", agentId: "ag_reg_format", action: "validation_passed", detail: "MIFID format validation: 0 errors, 3 warnings (non-blocking)", category: "compliance_review", permissionDecision: "allowed", immutableHash: "sha256:9e1c2d0a-aud-008", timestamp: "2026-06-08T14:18:00Z", cost: 0.10 }
 ];
 
 export const demoCostSummary: CostSummary = {

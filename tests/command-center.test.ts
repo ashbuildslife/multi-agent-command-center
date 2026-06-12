@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { demoAgents, demoDriftAlerts, demoCostSummary, demoArtifacts } from "@/lib/demo-data";
+import { demoAgents, demoDriftAlerts, demoCostSummary, demoArtifacts, demoAuditLog } from "@/lib/demo-data";
 
 describe("agent observability", () => {
   it("has 10 agent workers", () => {
@@ -49,5 +49,26 @@ describe("artifact review", () => {
   it("has pending review artifacts", () => {
     const pending = demoArtifacts.filter(a => a.status === "pending_review");
     expect(pending.length).toBeGreaterThan(0);
+  });
+});
+
+describe("permissioned audit trail", () => {
+  it("records immutable hashes for every audit event", () => {
+    for (const entry of demoAuditLog) {
+      expect(entry.immutableHash).toMatch(/^sha256:/);
+    }
+  });
+
+  it("routes risk and compliance decisions through explicit review gates", () => {
+    const gated = demoAuditLog.filter(entry => ["risk_decision", "compliance_review"].includes(entry.category));
+
+    expect(gated.length).toBeGreaterThan(0);
+    expect(gated.some(entry => entry.permissionDecision === "review_required")).toBe(true);
+  });
+
+  it("blocks system events when agents loop or upstream systems fail", () => {
+    const blockedSystemEvents = demoAuditLog.filter(entry => entry.category === "system" && entry.permissionDecision === "blocked");
+
+    expect(blockedSystemEvents.map(entry => entry.action)).toEqual(expect.arrayContaining(["loop_halted", "api_timeout"]));
   });
 });
