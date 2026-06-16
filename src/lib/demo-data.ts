@@ -177,5 +177,11 @@ export const demoCostSummary: CostSummary = {
     { projectName: "Transaction Fraud Detection", cost: 82.30 },
     { projectName: "KYC Document Review", cost: 47.50 },
     { projectName: "Regulatory Report Generation", cost: 31.20 }
+  ],
+  costByCategory: [
+    { category: "data_access", cost: 1.20 },
+    { category: "risk_decision", cost: 0.35 },
+    { category: "compliance_review", cost: 0.67 },
+    { category: "system", cost: 1.13 }
   ]
 };

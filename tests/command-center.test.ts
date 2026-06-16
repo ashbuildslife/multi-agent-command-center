@@ -43,6 +43,25 @@ describe("cost tracking", () => {
     const expected = Math.round((demoCostSummary.totalSpent / demoCostSummary.budgetLimit) * 100);
     expect(demoCostSummary.percentUsed).toBe(expected);
   });
+
+  it("provides category-level cost attribution from the audit log", () => {
+    const actualByCategory = new Map<string, number>();
+    for (const entry of demoAuditLog) {
+      const prev = actualByCategory.get(entry.category) ?? 0;
+      actualByCategory.set(entry.category, prev + entry.cost);
+    }
+
+    for (const bucket of demoCostSummary.costByCategory) {
+      expect(bucket.cost).toBeGreaterThan(0);
+      expect(Math.abs(bucket.cost - (actualByCategory.get(bucket.category) ?? 0))).toBeLessThan(0.02);
+    }
+  });
+
+  it("covers every audit category present in the log", () => {
+    const loggedCategories = new Set(demoAuditLog.map(e => e.category));
+    const summaryCategories = new Set(demoCostSummary.costByCategory.map(b => b.category));
+    expect(summaryCategories).toEqual(loggedCategories);
+  });
 });
 
 describe("artifact review", () => {

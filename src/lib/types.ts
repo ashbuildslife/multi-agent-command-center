@@ -86,6 +86,7 @@ export interface CostSummary {
   percentUsed: number;
   costByAgent: { agentName: string; cost: number }[];
   costByProject: { projectName: string; cost: number }[];
+  costByCategory: { category: AuditCategory; cost: number }[];
 }
 
 export interface CommandCenterSnapshot {
