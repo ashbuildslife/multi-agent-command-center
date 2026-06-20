@@ -90,4 +90,17 @@ describe("permissioned audit trail", () => {
 
     expect(blockedSystemEvents.map(entry => entry.action)).toEqual(expect.arrayContaining(["loop_halted", "api_timeout"]));
   });
+
+  it("never auto-approves material regulatory actions — risk flags, compliance drafts, and anomaly reports always route through review", () => {
+    const materialRegulatoryActions = demoAuditLog.filter(
+      entry =>
+        entry.category === "risk_decision" ||
+        (entry.category === "compliance_review" && entry.action !== "validation_passed")
+    );
+
+    expect(materialRegulatoryActions.length).toBeGreaterThan(0);
+    for (const entry of materialRegulatoryActions) {
+      expect(entry.permissionDecision).not.toBe("allowed");
+    }
+  });
 });
