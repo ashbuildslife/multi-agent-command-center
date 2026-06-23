@@ -254,6 +254,9 @@ export default function Home() {
                   <span className="tabular-nums text-slate-400">${entry.cost.toFixed(2)}</span>
                 </div>
                 <p className="mt-1 text-xs leading-5 text-slate-600">{entry.detail}</p>
+                <div className="mt-2 rounded-lg bg-white px-2 py-1 text-[10px] leading-4 text-slate-500">
+                  <span className="font-semibold text-slate-700">{entry.policyId}</span> · {entry.decisionReason}
+                </div>
                 <p className="mt-1 text-[10px] text-slate-400">{new Date(entry.timestamp).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}</p>
               </div>
             ))}

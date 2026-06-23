@@ -75,6 +75,8 @@ export interface AuditEntry {
   detail: string;
   category: AuditCategory;
   permissionDecision: PermissionDecision;
+  policyId: string;
+  decisionReason: string;
   immutableHash: string;
   timestamp: string;
   cost: number;

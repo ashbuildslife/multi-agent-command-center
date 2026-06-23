@@ -78,6 +78,13 @@ describe("permissioned audit trail", () => {
     }
   });
 
+  it("ties every permission decision to an auditable policy and rationale", () => {
+    for (const entry of demoAuditLog) {
+      expect(entry.policyId).toMatch(/^POL-/);
+      expect(entry.decisionReason.length).toBeGreaterThan(40);
+    }
+  });
+
   it("routes risk and compliance decisions through explicit review gates", () => {
     const gated = demoAuditLog.filter(entry => ["risk_decision", "compliance_review"].includes(entry.category));
 
