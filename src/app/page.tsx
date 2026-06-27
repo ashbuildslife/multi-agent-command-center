@@ -4,6 +4,7 @@ import {
   demoAuditLog,
   demoCostSummary,
   demoDriftAlerts,
+  demoEgressGateReviews,
   demoMembers,
   demoWorkspace
 } from "@/lib/demo-data";
@@ -62,6 +63,7 @@ export default function Home() {
   const haltedAgents = demoAgents.filter(a => a.loopDetected || a.status === "halted").length;
   const pendingReviews = demoArtifacts.filter(a => a.status === "pending_review").length;
   const highDrifts = demoDriftAlerts.filter(d => d.severity === "high").length;
+  const blockedEgress = demoEgressGateReviews.filter(review => review.decision === "blocked").length;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-5 py-8 md:px-8 lg:px-10 bg-slate-50">
@@ -210,6 +212,38 @@ export default function Home() {
           </div>
         </Card>
       </div>
+
+      {/* EGRESS GATE */}
+      <Card>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-bold text-slate-950">Egress Gate Reviews</h2>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-600">
+              Prompt-injection defenses treat content-derived targets as tainted. External actions are blocked or routed to review before data leaves the workspace.
+            </p>
+          </div>
+          <Badge tone={blockedEgress > 0 ? "red" : "green"}>{blockedEgress} blocked</Badge>
+        </div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-3">
+          {demoEgressGateReviews.map(review => (
+            <div key={review.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-slate-950">{review.agentName}</p>
+                <Badge tone={review.decision === "blocked" ? "red" : review.decision === "review_required" ? "amber" : "green"}>
+                  {review.decision.replace(/_/g, " ")}
+                </Badge>
+              </div>
+              <p className="mt-2 text-sm leading-5 text-slate-700">{review.requestedAction}</p>
+              <p className="mt-2 break-all text-xs text-slate-500">Target: {review.target}</p>
+              <p className="mt-2 text-xs font-semibold text-indigo-600">{review.policyId}</p>
+              {review.taintedFields.length > 0 && (
+                <p className="mt-2 text-xs text-red-600">Tainted fields: {review.taintedFields.join(", ")}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </Card>
+
 
       {/* ARTIFACT REVIEW + AUDIT LOG */}
       <div className="grid gap-6 lg:grid-cols-[1fr_0.8fr]">

@@ -1,4 +1,4 @@
-import type { AgentWorker, AuditEntry, CostSummary, DriftAlert, Project, RunArtifact, Workspace, WorkspaceMember } from "./types";
+import type { AgentWorker, AuditEntry, CostSummary, DriftAlert, EgressGateReview, Project, RunArtifact, Workspace, WorkspaceMember } from "./types";
 
 export const demoWorkspace: Workspace = {
   id: "ws_fintech",
@@ -154,6 +154,45 @@ export const demoAuditLog: AuditEntry[] = [
   { id: "aud_006", agentId: "ag_onb_verify", action: "api_timeout", detail: "Registry API timeout after 3 retries (30s each). Affected: 12 entity verifications.", category: "system", permissionDecision: "blocked", policyId: "POL-RESILIENCE-RETRY-006", decisionReason: "Blocked because registry evidence could not be refreshed after the retry budget was exhausted", immutableHash: "sha256:9e1c2d0a-aud-006", timestamp: "2026-06-08T14:10:00Z", cost: 0.19 },
   { id: "aud_007", agentId: "ag_onb_collect", action: "docs_fetched", detail: "12 incorporation documents retrieved from ACRA", category: "data_access", permissionDecision: "allowed", policyId: "POL-DATA-SOURCE-007", decisionReason: "Allowed because the request used an approved registry source and only pulled onboarding evidence", immutableHash: "sha256:9e1c2d0a-aud-007", timestamp: "2026-06-08T14:33:00Z", cost: 0.83 },
   { id: "aud_008", agentId: "ag_reg_format", action: "validation_passed", detail: "MIFID format validation: 0 errors, 3 warnings (non-blocking)", category: "compliance_review", permissionDecision: "allowed", policyId: "POL-FORMAT-VALID-008", decisionReason: "Allowed because the validator only checked schema format and did not approve report content", immutableHash: "sha256:9e1c2d0a-aud-008", timestamp: "2026-06-08T14:18:00Z", cost: 0.10 }
+];
+
+export const demoEgressGateReviews: EgressGateReview[] = [
+  {
+    id: "eg_001",
+    agentId: "ag_fraud_explain",
+    agentName: "ExplainGen-v2",
+    requestedAction: "Post fraud-case explanation to external case-management webhook",
+    target: "https://case-sync.example.com/fraud/TX-2847",
+    sourceKind: "untrusted_content",
+    taintedFields: ["webhook_url", "beneficiary_name"],
+    decision: "blocked",
+    policyId: "POL-EGRESS-TAINT-009",
+    decisionReason: "Blocked because external target and beneficiary context were derived from untrusted transaction notes, preventing prompt-injection exfiltration"
+  },
+  {
+    id: "eg_002",
+    agentId: "ag_reg_draft",
+    agentName: "RegDraft-v1",
+    requestedAction: "Submit MIFID narrative to regulator portal",
+    target: "FCA transaction-reporting portal",
+    sourceKind: "operator_instruction",
+    taintedFields: ["narrative_body"],
+    decision: "review_required",
+    policyId: "POL-EGRESS-REVIEW-010",
+    decisionReason: "Required compliance review because a generated regulatory filing leaves the workspace and may carry model-derived assertions"
+  },
+  {
+    id: "eg_003",
+    agentId: "ag_kyc_audit",
+    agentName: "AuditTrail-v1",
+    requestedAction: "Write audit hash to internal evidence ledger",
+    target: "internal://evidence-ledger/audit-hashes",
+    sourceKind: "trusted_system",
+    taintedFields: [],
+    decision: "allowed",
+    policyId: "POL-EGRESS-INTERNAL-011",
+    decisionReason: "Allowed because the target is internal-only and all fields come from signed system events rather than untrusted content"
+  }
 ];
 
 export const demoCostSummary: CostSummary = {

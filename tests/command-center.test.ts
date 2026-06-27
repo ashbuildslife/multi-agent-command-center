@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { demoAgents, demoDriftAlerts, demoCostSummary, demoArtifacts, demoAuditLog } from "@/lib/demo-data";
+import { demoAgents, demoDriftAlerts, demoCostSummary, demoArtifacts, demoAuditLog, demoEgressGateReviews } from "@/lib/demo-data";
 
 describe("agent observability", () => {
   it("has 10 agent workers", () => {
@@ -70,6 +70,28 @@ describe("artifact review", () => {
     expect(pending.length).toBeGreaterThan(0);
   });
 });
+
+describe("egress gate", () => {
+  it("blocks external actions tainted by untrusted content", () => {
+    const untrustedExternalActions = demoEgressGateReviews.filter(
+      review => review.sourceKind === "untrusted_content" && !review.target.startsWith("internal://")
+    );
+
+    expect(untrustedExternalActions.length).toBeGreaterThan(0);
+    for (const review of untrustedExternalActions) {
+      expect(review.decision).toBe("blocked");
+      expect(review.taintedFields.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("documents a policy and rationale for every egress decision", () => {
+    for (const review of demoEgressGateReviews) {
+      expect(review.policyId).toMatch(/^POL-EGRESS-/);
+      expect(review.decisionReason.length).toBeGreaterThan(80);
+    }
+  });
+});
+
 
 describe("permissioned audit trail", () => {
   it("records immutable hashes for every audit event", () => {

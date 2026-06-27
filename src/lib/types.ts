@@ -3,6 +3,7 @@ export type TrustLevel = "auto_approve" | "review_required" | "deny";
 export type DriftSeverity = "none" | "low" | "medium" | "high";
 export type AuditCategory = "system" | "data_access" | "risk_decision" | "compliance_review";
 export type PermissionDecision = "allowed" | "review_required" | "blocked";
+export type TaintSource = "trusted_system" | "untrusted_content" | "operator_instruction";
 
 export interface WorkspaceMember {
   id: string;
@@ -82,6 +83,19 @@ export interface AuditEntry {
   cost: number;
 }
 
+export interface EgressGateReview {
+  id: string;
+  agentId: string;
+  agentName: string;
+  requestedAction: string;
+  target: string;
+  sourceKind: TaintSource;
+  taintedFields: string[];
+  decision: PermissionDecision;
+  policyId: string;
+  decisionReason: string;
+}
+
 export interface CostSummary {
   totalSpent: number;
   budgetLimit: number;
@@ -98,5 +112,6 @@ export interface CommandCenterSnapshot {
   driftAlerts: DriftAlert[];
   artifacts: RunArtifact[];
   auditLog: AuditEntry[];
+  egressGateReviews: EgressGateReview[];
   costSummary: CostSummary;
 }
