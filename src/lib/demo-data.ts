@@ -192,6 +192,18 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     decision: "allowed",
     policyId: "POL-EGRESS-INTERNAL-011",
     decisionReason: "Allowed because the target is internal-only and all fields come from signed system events rather than untrusted content"
+  },
+  {
+    id: "eg_004",
+    agentId: "ag_onb_collect",
+    agentName: "DataCollect-v3",
+    requestedAction: "Upload full KYC evidence packet to vendor URL embedded in an onboarding PDF",
+    target: "https://vendor-review.example.net/upload?client=greenfield",
+    sourceKind: "untrusted_content",
+    taintedFields: ["uploaded_pdf_instructions", "external_upload_url", "kyc_evidence_packet"],
+    decision: "blocked",
+    policyId: "POL-EGRESS-PII-012",
+    decisionReason: "Blocked because an untrusted onboarding document supplied the external upload destination while the payload contained customer KYC evidence, preventing prompt-injection-driven data exfiltration"
   }
 ];
 

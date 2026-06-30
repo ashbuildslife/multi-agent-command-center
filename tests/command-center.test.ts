@@ -90,6 +90,22 @@ describe("egress gate", () => {
       expect(review.decisionReason.length).toBeGreaterThan(80);
     }
   });
+
+  it("blocks untrusted documents from selecting external targets for customer evidence packets", () => {
+    const evidencePacketAttempts = demoEgressGateReviews.filter(
+      review =>
+        review.sourceKind === "untrusted_content" &&
+        review.taintedFields.includes("kyc_evidence_packet") &&
+        review.taintedFields.includes("external_upload_url")
+    );
+
+    expect(evidencePacketAttempts.length).toBeGreaterThan(0);
+    for (const review of evidencePacketAttempts) {
+      expect(review.target).not.toMatch(/^internal:\/\//);
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason).toContain("data exfiltration");
+    }
+  });
 });
 
 
