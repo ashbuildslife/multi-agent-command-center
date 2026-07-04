@@ -239,6 +239,9 @@ export default function Home() {
               {review.taintedFields.length > 0 && (
                 <p className="mt-2 text-xs text-red-600">Tainted fields: {review.taintedFields.join(", ")}</p>
               )}
+              {review.riskFactors.length > 0 && (
+                <p className="mt-1 text-xs text-amber-700">Risk factors: {review.riskFactors.map(factor => factor.replace(/_/g, " ")).join(", ")}</p>
+              )}
             </div>
           ))}
         </div>

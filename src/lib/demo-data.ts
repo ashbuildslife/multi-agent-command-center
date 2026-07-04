@@ -165,6 +165,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     target: "https://case-sync.example.com/fraud/TX-2847",
     sourceKind: "untrusted_content",
     taintedFields: ["webhook_url", "beneficiary_name"],
+    riskFactors: ["private_data_access", "untrusted_content", "external_communication"],
     decision: "blocked",
     policyId: "POL-EGRESS-TAINT-009",
     decisionReason: "Blocked because external target and beneficiary context were derived from untrusted transaction notes, preventing prompt-injection exfiltration"
@@ -177,6 +178,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     target: "FCA transaction-reporting portal",
     sourceKind: "operator_instruction",
     taintedFields: ["narrative_body"],
+    riskFactors: ["private_data_access", "external_communication"],
     decision: "review_required",
     policyId: "POL-EGRESS-REVIEW-010",
     decisionReason: "Required compliance review because a generated regulatory filing leaves the workspace and may carry model-derived assertions"
@@ -189,6 +191,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     target: "internal://evidence-ledger/audit-hashes",
     sourceKind: "trusted_system",
     taintedFields: [],
+    riskFactors: [],
     decision: "allowed",
     policyId: "POL-EGRESS-INTERNAL-011",
     decisionReason: "Allowed because the target is internal-only and all fields come from signed system events rather than untrusted content"
@@ -201,6 +204,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     target: "https://vendor-review.example.net/upload?client=greenfield",
     sourceKind: "untrusted_content",
     taintedFields: ["uploaded_pdf_instructions", "external_upload_url", "kyc_evidence_packet"],
+    riskFactors: ["private_data_access", "untrusted_content", "external_communication"],
     decision: "blocked",
     policyId: "POL-EGRESS-PII-012",
     decisionReason: "Blocked because an untrusted onboarding document supplied the external upload destination while the payload contained customer KYC evidence, preventing prompt-injection-driven data exfiltration"

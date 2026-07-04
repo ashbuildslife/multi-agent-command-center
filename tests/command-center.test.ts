@@ -91,6 +91,23 @@ describe("egress gate", () => {
     }
   });
 
+  it("blocks lethal-trifecta egress before private data leaves through untrusted external channels", () => {
+    const lethalTrifecta = demoEgressGateReviews.filter(
+      review =>
+        review.riskFactors.includes("private_data_access") &&
+        review.riskFactors.includes("untrusted_content") &&
+        review.riskFactors.includes("external_communication")
+    );
+
+    expect(lethalTrifecta.length).toBeGreaterThan(0);
+    for (const review of lethalTrifecta) {
+      expect(review.sourceKind).toBe("untrusted_content");
+      expect(review.target).not.toMatch(/^internal:\/\//);
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("exfiltration");
+    }
+  });
+
   it("blocks untrusted documents from selecting external targets for customer evidence packets", () => {
     const evidencePacketAttempts = demoEgressGateReviews.filter(
       review =>

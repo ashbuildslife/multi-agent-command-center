@@ -4,6 +4,7 @@ export type DriftSeverity = "none" | "low" | "medium" | "high";
 export type AuditCategory = "system" | "data_access" | "risk_decision" | "compliance_review";
 export type PermissionDecision = "allowed" | "review_required" | "blocked";
 export type TaintSource = "trusted_system" | "untrusted_content" | "operator_instruction";
+export type EgressRiskFactor = "private_data_access" | "untrusted_content" | "external_communication";
 
 export interface WorkspaceMember {
   id: string;
@@ -91,6 +92,7 @@ export interface EgressGateReview {
   target: string;
   sourceKind: TaintSource;
   taintedFields: string[];
+  riskFactors: EgressRiskFactor[];
   decision: PermissionDecision;
   policyId: string;
   decisionReason: string;
