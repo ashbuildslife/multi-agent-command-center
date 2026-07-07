@@ -123,6 +123,23 @@ describe("egress gate", () => {
       expect(review.decisionReason).toContain("data exfiltration");
     }
   });
+
+  it("blocks third-party API responses from authorizing sensitive exports", () => {
+    const apiResponseExports = demoEgressGateReviews.filter(
+      review =>
+        review.sourceKind === "untrusted_content" &&
+        review.taintedFields.includes("api_response_webhook_url")
+    );
+
+    expect(apiResponseExports.length).toBeGreaterThan(0);
+    for (const review of apiResponseExports) {
+      expect(review.target).not.toMatch(/^internal:\/\//);
+      expect(review.decision).toBe("blocked");
+      expect(review.taintedFields).toEqual(expect.arrayContaining(["customer_risk_scores"]));
+      expect(review.decisionReason.toLowerCase()).toContain("tool abuse");
+      expect(review.decisionReason.toLowerCase()).toContain("data exfiltration");
+    }
+  });
 });
 
 

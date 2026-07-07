@@ -208,6 +208,19 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     decision: "blocked",
     policyId: "POL-EGRESS-PII-012",
     decisionReason: "Blocked because an untrusted onboarding document supplied the external upload destination while the payload contained customer KYC evidence, preventing prompt-injection-driven data exfiltration"
+  },
+  {
+    id: "eg_005",
+    agentId: "ag_kyc_risk",
+    agentName: "RiskScorer-v1",
+    requestedAction: "Export sanctions-screening results to analytics webhook returned by a third-party enrichment API",
+    target: "https://analytics-drop.example.org/agent-export",
+    sourceKind: "untrusted_content",
+    taintedFields: ["api_response_webhook_url", "sanctions_screening_results", "customer_risk_scores"],
+    riskFactors: ["private_data_access", "untrusted_content", "external_communication"],
+    decision: "blocked",
+    policyId: "POL-EGRESS-API-013",
+    decisionReason: "Blocked because a third-party API response selected an external export destination for sanctions results and customer risk scores, preventing prompt-injection data exfiltration and tool abuse"
   }
 ];
 
