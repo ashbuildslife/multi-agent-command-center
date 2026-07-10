@@ -242,6 +242,9 @@ export default function Home() {
               {review.riskFactors.length > 0 && (
                 <p className="mt-1 text-xs text-amber-700">Risk factors: {review.riskFactors.map(factor => factor.replace(/_/g, " ")).join(", ")}</p>
               )}
+              <p className={`mt-1 text-xs font-semibold ${review.authorizationState === "out_of_scope" ? "text-red-700" : "text-slate-600"}`}>
+                Authorization: {review.authorizationState.replace(/_/g, " ")}
+              </p>
             </div>
           ))}
         </div>

@@ -166,6 +166,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     sourceKind: "untrusted_content",
     taintedFields: ["webhook_url", "beneficiary_name"],
     riskFactors: ["private_data_access", "untrusted_content", "external_communication"],
+    authorizationState: "out_of_scope",
     decision: "blocked",
     policyId: "POL-EGRESS-TAINT-009",
     decisionReason: "Blocked because external target and beneficiary context were derived from untrusted transaction notes, preventing prompt-injection exfiltration"
@@ -179,6 +180,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     sourceKind: "operator_instruction",
     taintedFields: ["narrative_body"],
     riskFactors: ["private_data_access", "external_communication"],
+    authorizationState: "human_review_required",
     decision: "review_required",
     policyId: "POL-EGRESS-REVIEW-010",
     decisionReason: "Required compliance review because a generated regulatory filing leaves the workspace and may carry model-derived assertions"
@@ -192,6 +194,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     sourceKind: "trusted_system",
     taintedFields: [],
     riskFactors: [],
+    authorizationState: "in_scope",
     decision: "allowed",
     policyId: "POL-EGRESS-INTERNAL-011",
     decisionReason: "Allowed because the target is internal-only and all fields come from signed system events rather than untrusted content"
@@ -205,6 +208,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     sourceKind: "untrusted_content",
     taintedFields: ["uploaded_pdf_instructions", "external_upload_url", "kyc_evidence_packet"],
     riskFactors: ["private_data_access", "untrusted_content", "external_communication"],
+    authorizationState: "out_of_scope",
     decision: "blocked",
     policyId: "POL-EGRESS-PII-012",
     decisionReason: "Blocked because an untrusted onboarding document supplied the external upload destination while the payload contained customer KYC evidence, preventing prompt-injection-driven data exfiltration"
@@ -218,6 +222,7 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     sourceKind: "untrusted_content",
     taintedFields: ["api_response_webhook_url", "sanctions_screening_results", "customer_risk_scores"],
     riskFactors: ["private_data_access", "untrusted_content", "external_communication"],
+    authorizationState: "out_of_scope",
     decision: "blocked",
     policyId: "POL-EGRESS-API-013",
     decisionReason: "Blocked because a third-party API response selected an external export destination for sanctions results and customer risk scores, preventing prompt-injection data exfiltration and tool abuse"

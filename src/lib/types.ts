@@ -5,6 +5,7 @@ export type AuditCategory = "system" | "data_access" | "risk_decision" | "compli
 export type PermissionDecision = "allowed" | "review_required" | "blocked";
 export type TaintSource = "trusted_system" | "untrusted_content" | "operator_instruction";
 export type EgressRiskFactor = "private_data_access" | "untrusted_content" | "external_communication";
+export type EgressAuthorizationState = "in_scope" | "human_review_required" | "out_of_scope";
 
 export interface WorkspaceMember {
   id: string;
@@ -93,6 +94,7 @@ export interface EgressGateReview {
   sourceKind: TaintSource;
   taintedFields: string[];
   riskFactors: EgressRiskFactor[];
+  authorizationState: EgressAuthorizationState;
   decision: PermissionDecision;
   policyId: string;
   decisionReason: string;

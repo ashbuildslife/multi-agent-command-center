@@ -84,6 +84,16 @@ describe("egress gate", () => {
     }
   });
 
+  it("binds every egress decision to the agent authorization scope", () => {
+    const outOfScope = demoEgressGateReviews.filter(review => review.authorizationState === "out_of_scope");
+    const humanReview = demoEgressGateReviews.filter(review => review.authorizationState === "human_review_required");
+
+    expect(outOfScope.length).toBeGreaterThan(0);
+    expect(humanReview.length).toBeGreaterThan(0);
+    expect(outOfScope.every(review => review.decision === "blocked")).toBe(true);
+    expect(humanReview.every(review => review.decision === "review_required")).toBe(true);
+  });
+
   it("documents a policy and rationale for every egress decision", () => {
     for (const review of demoEgressGateReviews) {
       expect(review.policyId).toMatch(/^POL-EGRESS-/);
