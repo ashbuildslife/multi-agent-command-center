@@ -150,6 +150,23 @@ describe("egress gate", () => {
       expect(review.decisionReason.toLowerCase()).toContain("data exfiltration");
     }
   });
+
+  it("blocks external image rendering from leaking telemetry through URL parameters", () => {
+    const externalRenders = demoEgressGateReviews.filter(review =>
+      review.taintedFields.includes("external_image_url")
+    );
+
+    expect(externalRenders.length).toBeGreaterThan(0);
+    for (const review of externalRenders) {
+      expect(review.sourceKind).toBe("untrusted_content");
+      expect(review.target).not.toMatch(/^internal:\/\//);
+      expect(review.taintedFields).toEqual(expect.arrayContaining(["url_query_parameter", "account_telemetry"]));
+      expect(review.authorizationState).toBe("out_of_scope");
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("image rendering");
+      expect(review.decisionReason.toLowerCase()).toContain("data exfiltration");
+    }
+  });
 });
 
 

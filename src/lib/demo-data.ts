@@ -226,6 +226,20 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     decision: "blocked",
     policyId: "POL-EGRESS-API-013",
     decisionReason: "Blocked because a third-party API response selected an external export destination for sanctions results and customer risk scores, preventing prompt-injection data exfiltration and tool abuse"
+  },
+  {
+    id: "eg_006",
+    agentId: "ag_fraud_tx",
+    agentName: "TxScreener-v3",
+    requestedAction: "Render a remote image from an incident runbook with account telemetry embedded in the URL",
+    target: "https://incident-assets.example.io/pixel.png?account=acct-847&risk=high",
+    sourceKind: "untrusted_content",
+    taintedFields: ["external_image_url", "url_query_parameter", "account_telemetry"],
+    riskFactors: ["private_data_access", "untrusted_content", "external_communication"],
+    authorizationState: "out_of_scope",
+    decision: "blocked",
+    policyId: "POL-EGRESS-RENDER-014",
+    decisionReason: "Blocked because an untrusted runbook requested external image rendering with private account telemetry in URL parameters, preventing indirect prompt-injection data exfiltration"
   }
 ];
 
