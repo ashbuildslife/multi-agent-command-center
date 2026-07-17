@@ -6,6 +6,7 @@ export type PermissionDecision = "allowed" | "review_required" | "blocked";
 export type TaintSource = "trusted_system" | "untrusted_content" | "operator_instruction";
 export type EgressRiskFactor = "private_data_access" | "untrusted_content" | "external_communication";
 export type EgressAuthorizationState = "in_scope" | "human_review_required" | "out_of_scope";
+export type DelegationVerification = "not_applicable" | "verified" | "unverified";
 
 export interface WorkspaceMember {
   id: string;
@@ -92,6 +93,8 @@ export interface EgressGateReview {
   requestedAction: string;
   target: string;
   sourceKind: TaintSource;
+  delegatedByAgentId: string | null;
+  delegationVerification: DelegationVerification;
   taintedFields: string[];
   riskFactors: EgressRiskFactor[];
   authorizationState: EgressAuthorizationState;

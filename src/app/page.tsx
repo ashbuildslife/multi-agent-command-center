@@ -235,6 +235,11 @@ export default function Home() {
               </div>
               <p className="mt-2 text-sm leading-5 text-slate-700">{review.requestedAction}</p>
               <p className="mt-2 break-all text-xs text-slate-500">Target: {review.target}</p>
+              {review.delegatedByAgentId && (
+                <p className="mt-2 text-xs font-semibold text-red-700">
+                  Delegated by: {review.delegatedByAgentId} · {review.delegationVerification.replace(/_/g, " ")}
+                </p>
+              )}
               <p className="mt-2 text-xs font-semibold text-indigo-600">{review.policyId}</p>
               {review.taintedFields.length > 0 && (
                 <p className="mt-2 text-xs text-red-600">Tainted fields: {review.taintedFields.join(", ")}</p>

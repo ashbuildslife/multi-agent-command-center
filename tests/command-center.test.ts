@@ -167,6 +167,38 @@ describe("egress gate", () => {
       expect(review.decisionReason.toLowerCase()).toContain("data exfiltration");
     }
   });
+
+  it("blocks unverified inter-agent delegation before a higher-privilege agent acts", () => {
+    const unverifiedDelegations = demoEgressGateReviews.filter(
+      review => review.delegationVerification === "unverified"
+    );
+
+    expect(unverifiedDelegations.length).toBeGreaterThan(0);
+    for (const review of unverifiedDelegations) {
+      expect(review.delegatedByAgentId).toBeTruthy();
+      expect(review.sourceKind).toBe("untrusted_content");
+      expect(review.authorizationState).toBe("out_of_scope");
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("confused-deputy");
+      expect(review.decisionReason.toLowerCase()).toContain("data exfiltration");
+    }
+  });
+
+  it("keeps delegated egress requests attributable to known agent workers", () => {
+    const agentIds = new Set(demoAgents.map(agent => agent.id));
+
+    for (const review of demoEgressGateReviews) {
+      if (review.delegationVerification === "not_applicable") {
+        expect(review.delegatedByAgentId).toBeNull();
+        continue;
+      }
+
+      expect(review.delegatedByAgentId).not.toBeNull();
+      expect(agentIds.has(review.agentId)).toBe(true);
+      expect(agentIds.has(review.delegatedByAgentId!)).toBe(true);
+      expect(review.delegatedByAgentId).not.toBe(review.agentId);
+    }
+  });
 });
 
 
