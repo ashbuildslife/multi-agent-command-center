@@ -240,6 +240,9 @@ export default function Home() {
                   Delegated by: {review.delegatedByAgentId} · {review.delegationVerification.replace(/_/g, " ")}
                 </p>
               )}
+              <p className={`mt-2 text-xs font-semibold ${review.contextAdmission === "quarantined" ? "text-red-700" : review.contextAdmission === "human_review_required" ? "text-amber-700" : "text-emerald-700"}`}>
+                Context admission: {review.contextAdmission.replace(/_/g, " ")} · source: {review.sourceKind.replace(/_/g, " ")}
+              </p>
               <p className="mt-2 text-xs font-semibold text-indigo-600">{review.policyId}</p>
               {review.taintedFields.length > 0 && (
                 <p className="mt-2 text-xs text-red-600">Tainted fields: {review.taintedFields.join(", ")}</p>

@@ -84,6 +84,21 @@ describe("egress gate", () => {
     }
   });
 
+  it("keeps context admission aligned with source trust", () => {
+    for (const review of demoEgressGateReviews) {
+      if (review.sourceKind === "untrusted_content") {
+        expect(review.contextAdmission).toBe("quarantined");
+        expect(review.decision).toBe("blocked");
+      } else if (review.sourceKind === "operator_instruction") {
+        expect(review.contextAdmission).toBe("human_review_required");
+        expect(review.decision).toBe("review_required");
+      } else {
+        expect(review.contextAdmission).toBe("admitted");
+        expect(review.decision).toBe("allowed");
+      }
+    }
+  });
+
   it("binds every egress decision to the agent authorization scope", () => {
     const outOfScope = demoEgressGateReviews.filter(review => review.authorizationState === "out_of_scope");
     const humanReview = demoEgressGateReviews.filter(review => review.authorizationState === "human_review_required");
