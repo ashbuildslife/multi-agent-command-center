@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { demoAgents, demoDriftAlerts, demoCostSummary, demoArtifacts, demoAuditLog, demoEgressGateReviews } from "@/lib/demo-data";
+import { demoAgents, demoDriftAlerts, demoCostSummary, demoArtifacts, demoAuditLog, demoEgressGateReviews, demoMemoryWriteReviews } from "@/lib/demo-data";
 
 describe("agent observability", () => {
   it("has 10 agent workers", () => {
@@ -212,6 +212,35 @@ describe("egress gate", () => {
       expect(agentIds.has(review.agentId)).toBe(true);
       expect(agentIds.has(review.delegatedByAgentId!)).toBe(true);
       expect(review.delegatedByAgentId).not.toBe(review.agentId);
+    }
+  });
+});
+
+
+describe("persistent memory gate", () => {
+  it("quarantines untrusted attempts to modify protected cross-session memory", () => {
+    const poisoningAttempts = demoMemoryWriteReviews.filter(
+      review => review.sourceKind === "untrusted_content" && review.crossSession && review.protectedKey
+    );
+
+    expect(poisoningAttempts.length).toBeGreaterThan(0);
+    for (const review of poisoningAttempts) {
+      expect(review.integrityStatus).toBe("baseline_mismatch");
+      expect(review.decision).toBe("blocked");
+      expect(review.ttlHours).toBeNull();
+      expect(review.decisionReason.toLowerCase()).toContain("memory poisoning");
+    }
+  });
+
+  it("only persists verified cross-session memory with bounded retention", () => {
+    const persisted = demoMemoryWriteReviews.filter(review => review.crossSession && review.decision === "allowed");
+
+    expect(persisted.length).toBeGreaterThan(0);
+    for (const review of persisted) {
+      expect(review.sourceKind).toBe("trusted_system");
+      expect(review.integrityStatus).toBe("verified");
+      expect(review.ttlHours).toBeGreaterThan(0);
+      expect(review.ttlHours).toBeLessThanOrEqual(168);
     }
   });
 });

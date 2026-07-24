@@ -1,4 +1,4 @@
-import type { AgentWorker, AuditEntry, CostSummary, DriftAlert, EgressGateReview, Project, RunArtifact, Workspace, WorkspaceMember } from "./types";
+import type { AgentWorker, AuditEntry, CostSummary, DriftAlert, EgressGateReview, MemoryWriteReview, Project, RunArtifact, Workspace, WorkspaceMember } from "./types";
 
 export const demoWorkspace: Workspace = {
   id: "ws_fintech",
@@ -275,6 +275,41 @@ export const demoEgressGateReviews: EgressGateReview[] = [
     decision: "blocked",
     policyId: "POL-EGRESS-DELEGATION-015",
     decisionReason: "Blocked because an unverified inter-agent delegation asked a higher-privilege data collector to export customer KYC evidence, preventing a confused-deputy path and data exfiltration"
+  }
+];
+
+export const demoMemoryWriteReviews: MemoryWriteReview[] = [
+  {
+    id: "memwr_001",
+    agentId: "ag_kyc_audit",
+    agentName: "AuditTrail-v1",
+    requestedKey: "workspace.policy_baselines.kyc_review_v4",
+    memoryScope: "workspace",
+    sourceKind: "trusted_system",
+    crossSession: true,
+    protectedKey: false,
+    sensitiveDataDetected: false,
+    integrityStatus: "verified",
+    ttlHours: 168,
+    decision: "allowed",
+    policyId: "POL-MEMORY-INTEGRITY-016",
+    decisionReason: "Allowed because a signed policy service supplied a checksum-verified baseline with a bounded seven-day lifetime"
+  },
+  {
+    id: "memwr_002",
+    agentId: "ag_onb_collect",
+    agentName: "DataCollect-v3",
+    requestedKey: "workspace.review_gates.customer_export",
+    memoryScope: "workspace",
+    sourceKind: "untrusted_content",
+    crossSession: true,
+    protectedKey: true,
+    sensitiveDataDetected: false,
+    integrityStatus: "baseline_mismatch",
+    ttlHours: null,
+    decision: "blocked",
+    policyId: "POL-MEMORY-POISONING-017",
+    decisionReason: "Blocked because an onboarding PDF attempted to persist a protected customer-export gate change across future sessions, indicating memory poisoning"
   }
 ];
 

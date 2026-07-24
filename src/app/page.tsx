@@ -5,6 +5,7 @@ import {
   demoCostSummary,
   demoDriftAlerts,
   demoEgressGateReviews,
+  demoMemoryWriteReviews,
   demoMembers,
   demoWorkspace
 } from "@/lib/demo-data";
@@ -64,6 +65,7 @@ export default function Home() {
   const pendingReviews = demoArtifacts.filter(a => a.status === "pending_review").length;
   const highDrifts = demoDriftAlerts.filter(d => d.severity === "high").length;
   const blockedEgress = demoEgressGateReviews.filter(review => review.decision === "blocked").length;
+  const quarantinedMemoryWrites = demoMemoryWriteReviews.filter(review => review.decision === "blocked").length;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-5 py-8 md:px-8 lg:px-10 bg-slate-50">
@@ -253,6 +255,43 @@ export default function Home() {
               <p className={`mt-1 text-xs font-semibold ${review.authorizationState === "out_of_scope" ? "text-red-700" : "text-slate-600"}`}>
                 Authorization: {review.authorizationState.replace(/_/g, " ")}
               </p>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+
+      {/* PERSISTENT MEMORY GATE */}
+      <Card>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-bold text-slate-950">Persistent Memory Gate</h2>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-600">
+              Cross-session writes are scoped, integrity-checked, and retention-bounded before they can influence future agent runs.
+            </p>
+          </div>
+          <Badge tone={quarantinedMemoryWrites > 0 ? "red" : "green"}>{quarantinedMemoryWrites} quarantined</Badge>
+        </div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          {demoMemoryWriteReviews.map(review => (
+            <div key={review.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-slate-950">{review.agentName}</p>
+                <Badge tone={review.decision === "blocked" ? "red" : review.decision === "review_required" ? "amber" : "green"}>
+                  {review.decision.replace(/_/g, " ")}
+                </Badge>
+              </div>
+              <p className="mt-2 break-all text-sm font-medium text-slate-700">{review.requestedKey}</p>
+              <p className="mt-2 text-xs text-slate-500">
+                Scope: {review.memoryScope} · cross-session: {review.crossSession ? "yes" : "no"} · TTL: {review.ttlHours === null ? "not persisted" : `${review.ttlHours}h`}
+              </p>
+              <p className={`mt-2 text-xs font-semibold ${review.integrityStatus === "baseline_mismatch" ? "text-red-700" : "text-emerald-700"}`}>
+                Integrity: {review.integrityStatus.replace(/_/g, " ")}
+                {review.protectedKey ? " · protected key" : ""}
+                {review.sensitiveDataDetected ? " · sensitive data detected" : ""}
+              </p>
+              <p className="mt-2 text-xs font-semibold text-indigo-600">{review.policyId}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600">{review.decisionReason}</p>
             </div>
           ))}
         </div>

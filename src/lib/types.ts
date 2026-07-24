@@ -8,6 +8,8 @@ export type EgressRiskFactor = "private_data_access" | "untrusted_content" | "ex
 export type EgressAuthorizationState = "in_scope" | "human_review_required" | "out_of_scope";
 export type DelegationVerification = "not_applicable" | "verified" | "unverified";
 export type ContextAdmission = "admitted" | "human_review_required" | "quarantined";
+export type MemoryScope = "session" | "user" | "workspace";
+export type MemoryIntegrityStatus = "verified" | "baseline_mismatch" | "not_applicable";
 
 export interface WorkspaceMember {
   id: string;
@@ -105,6 +107,23 @@ export interface EgressGateReview {
   decisionReason: string;
 }
 
+export interface MemoryWriteReview {
+  id: string;
+  agentId: string;
+  agentName: string;
+  requestedKey: string;
+  memoryScope: MemoryScope;
+  sourceKind: TaintSource;
+  crossSession: boolean;
+  protectedKey: boolean;
+  sensitiveDataDetected: boolean;
+  integrityStatus: MemoryIntegrityStatus;
+  ttlHours: number | null;
+  decision: PermissionDecision;
+  policyId: string;
+  decisionReason: string;
+}
+
 export interface CostSummary {
   totalSpent: number;
   budgetLimit: number;
@@ -122,5 +141,6 @@ export interface CommandCenterSnapshot {
   artifacts: RunArtifact[];
   auditLog: AuditEntry[];
   egressGateReviews: EgressGateReview[];
+  memoryWriteReviews: MemoryWriteReview[];
   costSummary: CostSummary;
 }
