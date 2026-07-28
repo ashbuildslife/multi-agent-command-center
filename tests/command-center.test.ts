@@ -232,6 +232,20 @@ describe("persistent memory gate", () => {
     }
   });
 
+  it("prevents untrusted memory from entering trusted instruction layers", () => {
+    const controlPlaneRequests = demoMemoryWriteReviews.filter(review =>
+      review.requestedTrustLayer === "system_prompt" || review.requestedTrustLayer === "global_hooks"
+    );
+
+    expect(controlPlaneRequests.length).toBeGreaterThan(0);
+    for (const review of controlPlaneRequests) {
+      expect(review.sourceKind).toBe("untrusted_content");
+      expect(review.appliedTrustLayer).toBe("not_persisted");
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("control plane");
+    }
+  });
+
   it("only persists verified cross-session memory with bounded retention", () => {
     const persisted = demoMemoryWriteReviews.filter(review => review.crossSession && review.decision === "allowed");
 
@@ -239,6 +253,8 @@ describe("persistent memory gate", () => {
     for (const review of persisted) {
       expect(review.sourceKind).toBe("trusted_system");
       expect(review.integrityStatus).toBe("verified");
+      expect(review.requestedTrustLayer).toBe("retrieval_context");
+      expect(review.appliedTrustLayer).toBe("retrieval_context");
       expect(review.ttlHours).toBeGreaterThan(0);
       expect(review.ttlHours).toBeLessThanOrEqual(168);
     }

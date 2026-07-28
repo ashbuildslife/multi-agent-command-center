@@ -290,6 +290,8 @@ export const demoMemoryWriteReviews: MemoryWriteReview[] = [
     protectedKey: false,
     sensitiveDataDetected: false,
     integrityStatus: "verified",
+    requestedTrustLayer: "retrieval_context",
+    appliedTrustLayer: "retrieval_context",
     ttlHours: 168,
     decision: "allowed",
     policyId: "POL-MEMORY-INTEGRITY-016",
@@ -306,10 +308,12 @@ export const demoMemoryWriteReviews: MemoryWriteReview[] = [
     protectedKey: true,
     sensitiveDataDetected: false,
     integrityStatus: "baseline_mismatch",
+    requestedTrustLayer: "system_prompt",
+    appliedTrustLayer: "not_persisted",
     ttlHours: null,
     decision: "blocked",
     policyId: "POL-MEMORY-POISONING-017",
-    decisionReason: "Blocked because an onboarding PDF attempted to persist a protected customer-export gate change across future sessions, indicating memory poisoning"
+    decisionReason: "Blocked because an onboarding PDF attempted to persist a protected customer-export gate change and promote it into the system-prompt control plane across future sessions, preventing memory poisoning"
   }
 ];
 
