@@ -12,6 +12,7 @@ export type MemoryScope = "session" | "user" | "workspace";
 export type MemoryIntegrityStatus = "verified" | "baseline_mismatch" | "not_applicable";
 export type MemoryRequestedTrustLayer = "retrieval_context" | "system_prompt" | "global_hooks";
 export type MemoryAppliedTrustLayer = "retrieval_context" | "not_persisted";
+export type MemoryPropagationState = "origin_agent_only" | "approved_workspace" | "not_propagated";
 
 export interface WorkspaceMember {
   id: string;
@@ -122,6 +123,8 @@ export interface MemoryWriteReview {
   integrityStatus: MemoryIntegrityStatus;
   requestedTrustLayer: MemoryRequestedTrustLayer;
   appliedTrustLayer: MemoryAppliedTrustLayer;
+  propagationState: MemoryPropagationState;
+  recipientAgentIds: string[];
   ttlHours: number | null;
   decision: PermissionDecision;
   policyId: string;

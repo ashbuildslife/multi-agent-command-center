@@ -288,6 +288,9 @@ export default function Home() {
               <p className={`mt-2 text-xs font-semibold ${review.appliedTrustLayer === "not_persisted" ? "text-red-700" : "text-indigo-700"}`}>
                 Requested layer: {review.requestedTrustLayer.replace(/_/g, " ")} · applied: {review.appliedTrustLayer.replace(/_/g, " ")}
               </p>
+              <p className={`mt-2 text-xs font-semibold ${review.propagationState === "not_propagated" ? "text-red-700" : "text-slate-600"}`}>
+                Propagation: {review.propagationState.replace(/_/g, " ")} · recipients: {review.recipientAgentIds.length === 0 ? "none" : review.recipientAgentIds.join(", ")}
+              </p>
               <p className={`mt-2 text-xs font-semibold ${review.integrityStatus === "baseline_mismatch" ? "text-red-700" : "text-emerald-700"}`}>
                 Integrity: {review.integrityStatus.replace(/_/g, " ")}
                 {review.protectedKey ? " · protected key" : ""}

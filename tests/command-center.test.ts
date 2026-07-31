@@ -246,6 +246,31 @@ describe("persistent memory gate", () => {
     }
   });
 
+  it("blocks poisoned memory from propagating to peer agents", () => {
+    const agentIds = new Set(demoAgents.map(agent => agent.id));
+    const poisoningAttempts = demoMemoryWriteReviews.filter(
+      review => review.sourceKind === "untrusted_content" || review.integrityStatus === "baseline_mismatch"
+    );
+
+    expect(poisoningAttempts.length).toBeGreaterThan(0);
+    for (const review of poisoningAttempts) {
+      expect(review.propagationState).toBe("not_propagated");
+      expect(review.recipientAgentIds).toHaveLength(0);
+      expect(review.decision).toBe("blocked");
+    }
+
+    const approvedPropagation = demoMemoryWriteReviews.filter(
+      review => review.propagationState === "approved_workspace"
+    );
+    expect(approvedPropagation.length).toBeGreaterThan(0);
+    for (const review of approvedPropagation) {
+      expect(review.sourceKind).toBe("trusted_system");
+      expect(review.integrityStatus).toBe("verified");
+      expect(review.recipientAgentIds.length).toBeGreaterThan(0);
+      expect(review.recipientAgentIds.every(agentId => agentIds.has(agentId))).toBe(true);
+    }
+  });
+
   it("only persists verified cross-session memory with bounded retention", () => {
     const persisted = demoMemoryWriteReviews.filter(review => review.crossSession && review.decision === "allowed");
 
