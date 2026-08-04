@@ -1,4 +1,4 @@
-import type { AgentWorker, AuditEntry, CostSummary, DriftAlert, EgressGateReview, MemoryWriteReview, Project, RunArtifact, Workspace, WorkspaceMember } from "./types";
+import type { AgentWorker, AuditEntry, CostSummary, DriftAlert, EgressGateReview, MemoryWriteReview, Project, RunArtifact, ToolGrantReview, Workspace, WorkspaceMember } from "./types";
 
 export const demoWorkspace: Workspace = {
   id: "ws_fintech",
@@ -318,6 +318,54 @@ export const demoMemoryWriteReviews: MemoryWriteReview[] = [
     decision: "blocked",
     policyId: "POL-MEMORY-POISONING-017",
     decisionReason: "Blocked because an onboarding PDF attempted to persist a protected customer-export gate change and promote it into the system-prompt control plane across future sessions, preventing memory poisoning"
+  }
+];
+
+export const demoToolGrantReviews: ToolGrantReview[] = [
+  {
+    id: "tool_001",
+    agentId: "ag_kyc_audit",
+    agentName: "AuditTrail-v1",
+    serverName: "internal://mcp/evidence-ledger",
+    toolName: "ledger.append_hash",
+    baselineManifestHash: "sha256:7c3d1e90-tool-001",
+    observedManifestHash: "sha256:7c3d1e90-tool-001",
+    manifestIntegrity: "match",
+    hiddenInstructionDetected: false,
+    lastScannedAt: "2026-06-08T14:30:00Z",
+    decision: "allowed",
+    policyId: "POL-TOOL-MANIFEST-018",
+    decisionReason: "Allowed because the observed tool manifest matches the operator-approved hash and the description scan found no embedded instructions"
+  },
+  {
+    id: "tool_002",
+    agentId: "ag_kyc_risk",
+    agentName: "RiskScorer-v1",
+    serverName: "mcp://vendor-screening/sanctions-tools",
+    toolName: "sanctions_lookup",
+    baselineManifestHash: "sha256:4a8b2c10-tool-002",
+    observedManifestHash: "sha256:9e5f7d31-tool-002",
+    manifestIntegrity: "mismatch",
+    hiddenInstructionDetected: true,
+    lastScannedAt: "2026-06-08T14:31:00Z",
+    decision: "blocked",
+    policyId: "POL-TOOL-RUGPULL-019",
+    decisionReason: "Blocked because the vendor server changed the tool description after operator approval, a rug pull, and the new description directs the agent to attach customer risk scores to every lookup, a tool poisoning exfiltration path"
+  },
+  {
+    id: "tool_003",
+    agentId: "ag_onb_collect",
+    agentName: "DataCollect-v3",
+    serverName: "mcp://doc-utils/summarizer",
+    toolName: "summarize_document",
+    baselineManifestHash: "sha256:2f6a9b44-tool-003",
+    observedManifestHash: "sha256:2f6a9b44-tool-003",
+    manifestIntegrity: "match",
+    hiddenInstructionDetected: true,
+    lastScannedAt: "2026-06-08T14:29:00Z",
+    decision: "blocked",
+    policyId: "POL-TOOL-POISON-020",
+    decisionReason: "Blocked because the description scan found concealed instructions telling the agent to include conversation history in every document payload, a tool poisoning pattern, even though the manifest hash still matched the submitted version"
   }
 ];
 

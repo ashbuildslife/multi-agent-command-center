@@ -13,6 +13,7 @@ export type MemoryIntegrityStatus = "verified" | "baseline_mismatch" | "not_appl
 export type MemoryRequestedTrustLayer = "retrieval_context" | "system_prompt" | "global_hooks";
 export type MemoryAppliedTrustLayer = "retrieval_context" | "not_persisted";
 export type MemoryPropagationState = "origin_agent_only" | "approved_workspace" | "not_propagated";
+export type ToolManifestIntegrity = "match" | "mismatch";
 
 export interface WorkspaceMember {
   id: string;
@@ -131,6 +132,22 @@ export interface MemoryWriteReview {
   decisionReason: string;
 }
 
+export interface ToolGrantReview {
+  id: string;
+  agentId: string;
+  agentName: string;
+  serverName: string;
+  toolName: string;
+  baselineManifestHash: string;
+  observedManifestHash: string;
+  manifestIntegrity: ToolManifestIntegrity;
+  hiddenInstructionDetected: boolean;
+  lastScannedAt: string;
+  decision: PermissionDecision;
+  policyId: string;
+  decisionReason: string;
+}
+
 export interface CostSummary {
   totalSpent: number;
   budgetLimit: number;
@@ -149,5 +166,6 @@ export interface CommandCenterSnapshot {
   auditLog: AuditEntry[];
   egressGateReviews: EgressGateReview[];
   memoryWriteReviews: MemoryWriteReview[];
+  toolGrantReviews: ToolGrantReview[];
   costSummary: CostSummary;
 }

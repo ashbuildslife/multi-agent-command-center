@@ -7,6 +7,7 @@ import {
   demoEgressGateReviews,
   demoMemoryWriteReviews,
   demoMembers,
+  demoToolGrantReviews,
   demoWorkspace
 } from "@/lib/demo-data";
 import type { AgentStatus, TrustLevel, DriftSeverity } from "@/lib/types";
@@ -66,6 +67,7 @@ export default function Home() {
   const highDrifts = demoDriftAlerts.filter(d => d.severity === "high").length;
   const blockedEgress = demoEgressGateReviews.filter(review => review.decision === "blocked").length;
   const quarantinedMemoryWrites = demoMemoryWriteReviews.filter(review => review.decision === "blocked").length;
+  const blockedToolGrants = demoToolGrantReviews.filter(review => review.decision === "blocked").length;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-5 py-8 md:px-8 lg:px-10 bg-slate-50">
@@ -295,6 +297,41 @@ export default function Home() {
                 Integrity: {review.integrityStatus.replace(/_/g, " ")}
                 {review.protectedKey ? " · protected key" : ""}
                 {review.sensitiveDataDetected ? " · sensitive data detected" : ""}
+              </p>
+              <p className="mt-2 text-xs font-semibold text-indigo-600">{review.policyId}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600">{review.decisionReason}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* TOOL GRANT REVIEWS */}
+      <Card>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-bold text-slate-950">Tool Grant Reviews</h2>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-600">
+              Connected tool manifests are hash-pinned at approval and re-scanned before each run. Rug-pulled descriptions and concealed instructions are blocked before an agent can call the tool.
+            </p>
+          </div>
+          <Badge tone={blockedToolGrants > 0 ? "red" : "green"}>{blockedToolGrants} blocked</Badge>
+        </div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-3">
+          {demoToolGrantReviews.map(review => (
+            <div key={review.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-slate-950">{review.agentName}</p>
+                <Badge tone={review.decision === "blocked" ? "red" : review.decision === "review_required" ? "amber" : "green"}>
+                  {review.decision.replace(/_/g, " ")}
+                </Badge>
+              </div>
+              <p className="mt-2 text-sm font-medium text-slate-700">{review.toolName}</p>
+              <p className="mt-1 break-all text-xs text-slate-500">Server: {review.serverName}</p>
+              <p className={`mt-2 text-xs font-semibold ${review.manifestIntegrity === "mismatch" ? "text-red-700" : "text-emerald-700"}`}>
+                Manifest integrity: {review.manifestIntegrity}
+              </p>
+              <p className={`mt-1 text-xs font-semibold ${review.hiddenInstructionDetected ? "text-red-700" : "text-emerald-700"}`}>
+                Description scan: {review.hiddenInstructionDetected ? "hidden instructions detected" : "clean"}
               </p>
               <p className="mt-2 text-xs font-semibold text-indigo-600">{review.policyId}</p>
               <p className="mt-1 text-xs leading-5 text-slate-600">{review.decisionReason}</p>

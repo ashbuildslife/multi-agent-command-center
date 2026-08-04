@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { demoAgents, demoDriftAlerts, demoCostSummary, demoArtifacts, demoAuditLog, demoEgressGateReviews, demoMemoryWriteReviews } from "@/lib/demo-data";
+import { demoAgents, demoDriftAlerts, demoCostSummary, demoArtifacts, demoAuditLog, demoEgressGateReviews, demoMemoryWriteReviews, demoToolGrantReviews } from "@/lib/demo-data";
 
 describe("agent observability", () => {
   it("has 10 agent workers", () => {
@@ -282,6 +282,49 @@ describe("persistent memory gate", () => {
       expect(review.appliedTrustLayer).toBe("retrieval_context");
       expect(review.ttlHours).toBeGreaterThan(0);
       expect(review.ttlHours).toBeLessThanOrEqual(168);
+    }
+  });
+});
+
+describe("tool grant reviews", () => {
+  it("blocks rug-pulled tools whose manifest changed after operator approval", () => {
+    const rugPulled = demoToolGrantReviews.filter(review => review.manifestIntegrity === "mismatch");
+
+    expect(rugPulled.length).toBeGreaterThan(0);
+    for (const review of rugPulled) {
+      expect(review.baselineManifestHash).not.toBe(review.observedManifestHash);
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("rug pull");
+    }
+  });
+
+  it("blocks tools whose descriptions carry hidden instructions", () => {
+    const poisonedDescriptions = demoToolGrantReviews.filter(review => review.hiddenInstructionDetected);
+
+    expect(poisonedDescriptions.length).toBeGreaterThan(0);
+    for (const review of poisonedDescriptions) {
+      expect(review.decision).not.toBe("allowed");
+      expect(review.decisionReason.toLowerCase()).toContain("tool poisoning");
+    }
+  });
+
+  it("only allows tools with matching manifests and clean description scans", () => {
+    const allowed = demoToolGrantReviews.filter(review => review.decision === "allowed");
+
+    expect(allowed.length).toBeGreaterThan(0);
+    for (const review of allowed) {
+      expect(review.manifestIntegrity).toBe("match");
+      expect(review.hiddenInstructionDetected).toBe(false);
+      expect(review.baselineManifestHash).toBe(review.observedManifestHash);
+    }
+  });
+
+  it("keeps tool grant reviews attributable to known agent workers", () => {
+    const agentIds = new Set(demoAgents.map(agent => agent.id));
+
+    expect(demoToolGrantReviews.length).toBeGreaterThan(0);
+    for (const review of demoToolGrantReviews) {
+      expect(agentIds.has(review.agentId)).toBe(true);
     }
   });
 });
