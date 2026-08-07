@@ -366,6 +366,21 @@ export const demoToolGrantReviews: ToolGrantReview[] = [
     decision: "blocked",
     policyId: "POL-TOOL-POISON-020",
     decisionReason: "Blocked because the description scan found concealed instructions telling the agent to include conversation history in every document payload, a tool poisoning pattern, even though the manifest hash still matched the submitted version"
+  },
+  {
+    id: "tool_004",
+    agentId: "ag_fraud_explain",
+    agentName: "ExplainGen-v2",
+    serverName: "mcp://vendor-ml/fraud-signals",
+    toolName: "explain_flag_reason",
+    baselineManifestHash: "ecdsa:6b4e2a09-sig-20260605-tool-004",
+    observedManifestHash: "ecdsa:3c1d9f78-sig-20260608-tool-004",
+    manifestIntegrity: "mismatch",
+    hiddenInstructionDetected: false,
+    lastScannedAt: "2026-06-08T15:45:00Z",
+    decision: "blocked",
+    policyId: "POL-TOOL-RESIGNING-021",
+    decisionReason: "Blocked because the vendor executed a rug pull — the tool manifest was re-signed with a different ECDSA signature key after operator approval. The observed manifest signature does not chain to the operator-approved signing certificate, preventing cryptographic manifest substitution attacks and tool metadata injection"
   }
 ];
 

@@ -327,6 +327,21 @@ describe("tool grant reviews", () => {
       expect(agentIds.has(review.agentId)).toBe(true);
     }
   });
+
+  it("detects and blocks tools re-signed with different cryptographic keys without re-approval", () => {
+    const resignedTools = demoToolGrantReviews.filter(
+      review => review.policyId === "POL-TOOL-RESIGNING-021"
+    );
+
+    expect(resignedTools.length).toBeGreaterThan(0);
+    for (const review of resignedTools) {
+      expect(review.manifestIntegrity).toBe("mismatch");
+      expect(review.baselineManifestHash).not.toBe(review.observedManifestHash);
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("re-signed");
+      expect(review.decisionReason.toLowerCase()).toContain("manifest substitution");
+    }
+  });
 });
 
 
