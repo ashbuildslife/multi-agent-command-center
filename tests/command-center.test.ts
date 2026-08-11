@@ -220,7 +220,7 @@ describe("egress gate", () => {
 describe("persistent memory gate", () => {
   it("quarantines untrusted attempts to modify protected cross-session memory", () => {
     const poisoningAttempts = demoMemoryWriteReviews.filter(
-      review => review.sourceKind === "untrusted_content" && review.crossSession && review.protectedKey
+      review => review.policyId === "POL-MEMORY-POISONING-017"
     );
 
     expect(poisoningAttempts.length).toBeGreaterThan(0);
@@ -268,6 +268,24 @@ describe("persistent memory gate", () => {
       expect(review.integrityStatus).toBe("verified");
       expect(review.recipientAgentIds.length).toBeGreaterThan(0);
       expect(review.recipientAgentIds.every(agentId => agentIds.has(agentId))).toBe(true);
+    }
+  });
+
+  it("detects agent impersonation when an untrusted inter-agent message claims a privileged identity", () => {
+    const impersonationAttempts = demoMemoryWriteReviews.filter(
+      review => review.policyId === "POL-MEMORY-IMPERSONATION-022"
+    );
+
+    expect(impersonationAttempts).toHaveLength(1);
+    for (const review of impersonationAttempts) {
+      expect(review.sourceKind).toBe("untrusted_content");
+      expect(review.integrityStatus).toBe("baseline_mismatch");
+      expect(review.protectedKey).toBe(true);
+      expect(review.requestedTrustLayer).toBe("system_prompt");
+      expect(review.appliedTrustLayer).toBe("not_persisted");
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("impersonation");
+      expect(review.decisionReason.toLowerCase()).toContain("identity-verification");
     }
   });
 

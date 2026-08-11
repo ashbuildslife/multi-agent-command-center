@@ -318,6 +318,26 @@ export const demoMemoryWriteReviews: MemoryWriteReview[] = [
     decision: "blocked",
     policyId: "POL-MEMORY-POISONING-017",
     decisionReason: "Blocked because an onboarding PDF attempted to persist a protected customer-export gate change and promote it into the system-prompt control plane across future sessions, preventing memory poisoning"
+  },
+  {
+    id: "memwr_003",
+    agentId: "ag_fraud_explain",
+    agentName: "ExplainGen-v2",
+    requestedKey: "workspace.policy_baselines.kyc_review_v4",
+    memoryScope: "workspace",
+    sourceKind: "untrusted_content",
+    crossSession: true,
+    protectedKey: true,
+    sensitiveDataDetected: false,
+    integrityStatus: "baseline_mismatch",
+    requestedTrustLayer: "system_prompt",
+    appliedTrustLayer: "not_persisted",
+    propagationState: "not_propagated",
+    recipientAgentIds: [],
+    ttlHours: null,
+    decision: "blocked",
+    policyId: "POL-MEMORY-IMPERSONATION-022",
+    decisionReason: "Blocked because an inter-agent message claimed to originate from a privileged audit agent (AuditTrail-v1) but identity-verification failed, detecting agent impersonation, and the message attempted to overwrite a policy baseline into the system-prompt control plane"
   }
 ];
 
