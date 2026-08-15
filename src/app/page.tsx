@@ -290,6 +290,12 @@ export default function Home() {
               <p className={`mt-2 text-xs font-semibold ${review.sourceKind === "untrusted_content" ? "text-amber-700" : "text-slate-600"}`}>
                 Source: {review.sourceKind.replace(/_/g, " ")}
               </p>
+              <p className={`mt-2 text-xs font-semibold ${review.entryVector === "session_summary" ? "text-amber-700" : "text-slate-600"}`}>
+                Entry vector: {review.entryVector.replace(/_/g, " ")}
+                {review.corroboratingSourceIds.length > 0
+                  ? ` · corroborated by: ${review.corroboratingSourceIds.join(", ")}`
+                  : " · no corroborating source"}
+              </p>
               <p className={`mt-2 text-xs font-semibold ${review.appliedTrustLayer === "not_persisted" ? "text-red-700" : "text-indigo-700"}`}>
                 Requested layer: {review.requestedTrustLayer.replace(/_/g, " ")} · applied: {review.appliedTrustLayer.replace(/_/g, " ")}
               </p>

@@ -9,6 +9,7 @@ export type EgressAuthorizationState = "in_scope" | "human_review_required" | "o
 export type DelegationVerification = "not_applicable" | "verified" | "unverified";
 export type ContextAdmission = "admitted" | "human_review_required" | "quarantined";
 export type MemoryScope = "session" | "user" | "workspace";
+export type MemoryEntryVector = "direct_write" | "session_summary" | "retrieval_result";
 export type MemoryIntegrityStatus = "verified" | "baseline_mismatch" | "not_applicable";
 export type MemoryRequestedTrustLayer = "retrieval_context" | "system_prompt" | "global_hooks";
 export type MemoryAppliedTrustLayer = "retrieval_context" | "not_persisted";
@@ -118,6 +119,8 @@ export interface MemoryWriteReview {
   requestedKey: string;
   memoryScope: MemoryScope;
   sourceKind: TaintSource;
+  entryVector: MemoryEntryVector;
+  corroboratingSourceIds: string[];
   crossSession: boolean;
   protectedKey: boolean;
   sensitiveDataDetected: boolean;

@@ -302,6 +302,40 @@ describe("persistent memory gate", () => {
       expect(review.ttlHours).toBeLessThanOrEqual(168);
     }
   });
+
+  it("blocks session-summary-derived memory when no independent source corroborates the claim", () => {
+    const summaryWrites = demoMemoryWriteReviews.filter(
+      review => review.entryVector === "session_summary"
+    );
+
+    expect(summaryWrites.length).toBeGreaterThan(0);
+    for (const review of summaryWrites) {
+      expect(review.sourceKind).toBe("untrusted_content");
+      expect(review.corroboratingSourceIds).toHaveLength(0);
+      expect(review.appliedTrustLayer).toBe("not_persisted");
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("summary-laundered");
+      expect(review.decisionReason.toLowerCase()).toContain("corroborated");
+    }
+  });
+
+  it("requires corroborating sources for every non-blocked cross-session write", () => {
+    const persisted = demoMemoryWriteReviews.filter(
+      review => review.crossSession && review.decision !== "blocked"
+    );
+
+    expect(persisted.length).toBeGreaterThan(0);
+    for (const review of persisted) {
+      expect(review.corroboratingSourceIds.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("records an entry vector for every memory write review", () => {
+    expect(demoMemoryWriteReviews.length).toBeGreaterThan(0);
+    for (const review of demoMemoryWriteReviews) {
+      expect(["direct_write", "session_summary", "retrieval_result"]).toContain(review.entryVector);
+    }
+  });
 });
 
 describe("tool grant reviews", () => {
