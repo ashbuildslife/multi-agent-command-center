@@ -330,6 +330,50 @@ describe("persistent memory gate", () => {
     }
   });
 
+  it("treats retrieval results as untrusted input that cannot re-persist policy memory", () => {
+    const retrievalWrites = demoMemoryWriteReviews.filter(
+      review => review.entryVector === "retrieval_result"
+    );
+
+    expect(retrievalWrites.length).toBeGreaterThan(0);
+    for (const review of retrievalWrites) {
+      expect(review.sourceKind).toBe("untrusted_content");
+      expect(review.protectedKey).toBe(true);
+      expect(review.integrityStatus).toBe("baseline_mismatch");
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("retrieval");
+    }
+  });
+
+  it("never lets a retrieved chunk corroborate its own cross-session write", () => {
+    const retrievalWrites = demoMemoryWriteReviews.filter(
+      review => review.entryVector === "retrieval_result"
+    );
+
+    expect(retrievalWrites.length).toBeGreaterThan(0);
+    for (const review of retrievalWrites) {
+      expect(review.corroboratingSourceIds).toHaveLength(0);
+      expect(review.crossSession).toBe(true);
+      expect(review.appliedTrustLayer).toBe("not_persisted");
+      expect(review.propagationState).toBe("not_propagated");
+      expect(review.recipientAgentIds).toHaveLength(0);
+    }
+  });
+
+  it("blocks seeded retrieval chunks from promoting policy changes into the control plane", () => {
+    const retrievalWrites = demoMemoryWriteReviews.filter(
+      review => review.entryVector === "retrieval_result"
+    );
+
+    expect(retrievalWrites.length).toBeGreaterThan(0);
+    for (const review of retrievalWrites) {
+      expect(review.requestedTrustLayer).toBe("global_hooks");
+      expect(review.appliedTrustLayer).toBe("not_persisted");
+      expect(review.decision).toBe("blocked");
+      expect(review.decisionReason.toLowerCase()).toContain("control plane");
+    }
+  });
+
   it("records an entry vector for every memory write review", () => {
     expect(demoMemoryWriteReviews.length).toBeGreaterThan(0);
     for (const review of demoMemoryWriteReviews) {

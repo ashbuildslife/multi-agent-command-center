@@ -366,6 +366,28 @@ export const demoMemoryWriteReviews: MemoryWriteReview[] = [
     decision: "blocked",
     policyId: "POL-MEMORY-SUMMARY-023",
     decisionReason: "Blocked because a session summarizer condensed an untrusted customer message into a proposed cross-session threshold change for the transaction-hold hook, no independent source of record corroborated the claim, and the summary attempted to promote the change into the global-hooks control plane, preventing summary-laundered memory poisoning"
+  },
+  {
+    id: "memwr_005",
+    agentId: "ag_kyc_doc",
+    agentName: "DocReview-v2",
+    requestedKey: "workspace.policy_baselines.transaction_hold_threshold",
+    memoryScope: "workspace",
+    sourceKind: "untrusted_content",
+    entryVector: "retrieval_result",
+    corroboratingSourceIds: [],
+    crossSession: true,
+    protectedKey: true,
+    sensitiveDataDetected: false,
+    integrityStatus: "baseline_mismatch",
+    requestedTrustLayer: "global_hooks",
+    appliedTrustLayer: "not_persisted",
+    propagationState: "not_propagated",
+    recipientAgentIds: [],
+    ttlHours: null,
+    decision: "blocked",
+    policyId: "POL-MEMORY-RETRIEVAL-024",
+    decisionReason: "Blocked because a shared-index retrieval returned a poisoned FAQ chunk seeded inside an uploaded onboarding document instructing agents to lower the transaction-hold threshold and promote the change into the global-hooks control plane; retrieved chunks are untrusted input and a retrieval hit cannot corroborate its own cross-session write, preventing retrieval-poisoned memory propagation"
   }
 ];
 
